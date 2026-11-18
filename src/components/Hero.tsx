@@ -33,10 +33,10 @@ export function Hero({ reduce, onHotspot }: Props) {
     const comets = [0, 0.38, 0.71];
 
     const map = (fx: number, fy: number): Pt => {
-      const iw = img.naturalWidth || 3168, ih = img.naturalHeight || 1021;
+      const iw = img.naturalWidth || 3168, ih = img.naturalHeight || 1344;
       const s = Math.max(W / iw, H / ih), dw = iw * s, dh = ih * s;
       const op = getComputedStyle(img).objectPosition.split(" ");
-      const px = (parseFloat(op[0]) || 55) / 100, py = (parseFloat(op[1]) || 40) / 100;
+      const px = (parseFloat(op[0]) || 55) / 100, py = (parseFloat(op[1]) || 60) / 100;
       return [(W - dw) * px + fx * dw, (H - dh) * py + fy * dh];
     };
     const catmull = (p0: Pt, p1: Pt, p2: Pt, p3: Pt, t: number): Pt => {
@@ -101,12 +101,27 @@ export function Hero({ reduce, onHotspot }: Props) {
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const P = hero.path.map(([x, y]) => map(x, y));
-      samples = [];
+      const dense: Pt[] = [];
       for (let i = 0; i < P.length - 1; i++) {
         const p0 = P[Math.max(i - 1, 0)], p1 = P[i], p2 = P[i + 1], p3 = P[Math.min(i + 2, P.length - 1)];
-        for (let k = 0; k < 24; k++) samples.push(catmull(p0, p1, p2, p3, k / 24));
+        for (let k = 0; k < 24; k++) dense.push(catmull(p0, p1, p2, p3, k / 24));
       }
-      samples.push(P[P.length - 1]);
+      dense.push(P[P.length - 1]);
+      // Resample by length so the light moves at an even speed; after the panel it runs faster.
+      const fast = map(0.846, 0)[0]; // x where the thread leaves the panel
+      const cum = [0];
+      for (let d = 1; d < dense.length; d++) {
+        const w = dense[d][0] > fast ? 0.4 : 1;
+        cum.push(cum[d - 1] + Math.hypot(dense[d][0] - dense[d - 1][0], dense[d][1] - dense[d - 1][1]) * w);
+      }
+      const total = cum[cum.length - 1] || 1, M = Math.max(240, Math.round(total / 3));
+      samples = [];
+      for (let s = 0, j = 0; s <= M; s++) {
+        const target = (total * s) / M;
+        while (j < cum.length - 2 && cum[j + 1] < target) j++;
+        const f = (target - cum[j]) / (cum[j + 1] - cum[j] || 1);
+        samples.push([dense[j][0] + (dense[j + 1][0] - dense[j][0]) * f, dense[j][1] + (dense[j + 1][1] - dense[j][1]) * f]);
+      }
       hotPts = hero.hotspots.map((h) => map(h.fx, h.fy));
       setSpots(hotPts.map(([x, y]) => ({ x, y, visible: x >= 0 && x <= W })));
       if (reduce || !running) draw(performance.now());
