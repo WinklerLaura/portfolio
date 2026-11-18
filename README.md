@@ -31,22 +31,4 @@ public/
   thesis.pdf, research-project.pdf, tedai-hackathon.mp4
 ```
 
-### Common changes
-
-- **Texts, projects, links:** `src/data.ts`
-- **Replace an image:** put the file into `public/tiles/` and update its path in `src/data.ts`
-- **Header image:** replace `public/hero.jpg`. If the light thread in the new image runs
-  differently, `hero.path` in `src/data.ts` has to be adjusted (fractions of image width/height).
-
-## Deploy
-
-1. Push the repository to GitHub.
-2. On [vercel.com](https://vercel.com), sign in with GitHub, click **Add New → Project**
-   and import the repository. Vercel detects Vite and Yarn automatically
-   (build command `yarn build`, output folder `dist`). Click **Deploy**.
-3. Optional: add your own domain under **Settings → Domains**.
-
-After deploying, change the `og:image` URL in `index.html` to the full address,
-e.g. `https://laurawinkler.at/og-image.jpg`, so link previews on LinkedIn show the image.
-
 Previous version (2024): [portfolio-2024](https://github.com/WinklerLaura/portfolio-2024)
