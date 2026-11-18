@@ -120,8 +120,7 @@ export const projects: Project[] = [
         "REST API",
         "MUI",
         "Recharts",
-        "i18next",
-        "Figma"
+        "i18next"
       ],
       "links": [
         {
@@ -436,7 +435,6 @@ export const skills = [
       "Linux",
       "Git",
       "JIRA",
-      "Figma",
       "Canva"
     ]
   }
@@ -456,8 +454,8 @@ export const facts = [
     "text": "I've grown cells in a lab and trained neural networks on a laptop. Both need constant care and still do whatever they want."
   },
   {
-    "title": "Half marathon",
-    "text": "I've run a half marathon. In the spirit of full honesty: that was a few years ago, and I've been in a very long recovery phase since."
+    "title": "Closing the female health gap",
+    "text": "Women's health is a topic close to my heart. Research and medicine still know far less about women's bodies than they should, and I'd love to help make that gap a little smaller."
   },
   {
     "title": "Women in Health IT",
