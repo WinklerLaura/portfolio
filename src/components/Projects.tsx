@@ -69,9 +69,9 @@ export function Projects({ reduce, paused, onOpen }: Props) {
     const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
     let turn = 0;
 
-    // On phones: the tile that is most visible, if at least 60% of it is on screen.
+    // On phones: the tile that is most visible, as soon as about a third of it is on screen.
     const focused = (): number => {
-      let best = -1, most = 0.6;
+      let best = -1, most = 0.35;
       ratioRef.current.forEach((r, i) => { if (r >= most) { best = i; most = r; } });
       return best;
     };
@@ -107,8 +107,8 @@ export function Projects({ reduce, paused, onOpen }: Props) {
       let ti: number;
       if (isNarrow()) {
         ti = focused();
-        if (ti < 0 || projects[ti].slides.length < 2) { later(cycle, 400); return; }
-        later(() => runTile(ti, cycle), 600);
+        if (ti < 0 || projects[ti].slides.length < 2) { later(cycle, 200); return; }
+        later(() => runTile(ti, cycle), 150);
         return;
       }
       ti = turn % projects.length; turn++;
