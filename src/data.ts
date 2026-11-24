@@ -19,6 +19,7 @@ export const profile = {
   // Shown as: "<main> <when>" and "<place>" on a second line (on phones they flow together).
   status: { main: ["Currently on parental leave ·", "Open to new roles"], when: "from early 2027", place: "Vienna · Hybrid" },
   about: "I started in a wet lab, moved into computational neuroscience and machine learning, and spent over two years building the interface of an AI-powered fall detection system for care facilities. What I enjoy most is building prototypes, shaping look and feel, and making AI-driven products clear and usable.",
+  email: "hello@laura-winkler.com",
   linkedin: "https://www.linkedin.com/in/laura-winkler-dev",
   github: "https://github.com/WinklerLaura",
 };
