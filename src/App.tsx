@@ -128,7 +128,7 @@ export default function App() {
             <span>
               © {new Date().getFullYear()} {profile.firstName} {profile.lastName} · Vienna
               <br />
-              <small className="ai-note"><a href="/imprint.html">Imprint</a> · <a href="/privacy.html">Privacy</a> · Built with the help of AI · Header image AI-generated</small>
+              <small className="ai-note"><a href="/imprint.html">Imprint</a> · <a href="/privacy.html">Privacy</a> · Header image AI-generated</small>
             </span>
             <span className="links">
               <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn<Arrow external /></a>
