@@ -92,13 +92,25 @@ export function Projects({ reduce, paused, onOpen }: Props) {
 
     const runTile = (ti: number, done: () => void) => {
       let shown = 1;
+      // On phones, another tile came into view: stop right away and let that one play.
+      const lostFocus = () => {
+        if (!isNarrow() || focused() === ti) return false;
+        backToCover(ti);
+        later(done, 0);
+        return true;
+      };
+      // Wait, but check every 200 ms whether the phone user scrolled to another tile.
+      const wait = (ms: number, next: () => void) => {
+        if (lostFocus()) return;
+        if (ms <= 0) { next(); return; }
+        later(() => wait(ms - 200, next), Math.min(ms, 200));
+      };
       const step = () => {
-        // On phones, stop as soon as another tile is the one being looked at.
-        if (isNarrow() && focused() !== ti) { backToCover(ti); later(done, 0); return; }
-        if (document.hidden || pausedRef.current || !seenRef.current[ti] || hoverRef.current[ti]) { later(step, 600); return; }
+        if (lostFocus()) return;
+        if (document.hidden || pausedRef.current || !seenRef.current[ti] || hoverRef.current[ti]) { later(step, 200); return; }
         const dur = advance(ti);
-        if (shown < projects[ti].slides.length) { shown++; later(step, Math.max(GAP, dur) + 200); }
-        else later(done, GAP);
+        if (shown < projects[ti].slides.length) { shown++; wait(Math.max(GAP, dur) + 200, step); }
+        else wait(GAP, done);
       };
       step();
     };
