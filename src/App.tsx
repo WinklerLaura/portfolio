@@ -51,6 +51,12 @@ export default function App() {
   return (
     <>
       <Stars reduce={reduce} />
+      {/* Section buttons: shown on phones and tablets, pinned to the top while scrolling */}
+      <nav className="nav" aria-label="Sections">
+        <a href="#projects">Projects</a>
+        <a href="#background">Background</a>
+        <a href="#contact">Contact</a>
+      </nav>
       <Hero reduce={reduce} onHotspot={jumpTo} />
 
       <div className="content" lang="en">
