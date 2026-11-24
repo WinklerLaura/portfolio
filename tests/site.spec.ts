@@ -96,7 +96,7 @@ test("the Contact me section has email, LinkedIn and GitHub", async ({ page }) =
   await page.goto("/");
   const contact = page.locator("#contact");
   await expect(contact).toContainText("Contact me");
-  await expect(contact.getByRole("link", { name: "hello@laura-winkler.com" })).toHaveAttribute("href", "mailto:hello@laura-winkler.com");
+  await expect(contact.getByRole("link", { name: "Email", exact: true })).toHaveAttribute("href", "mailto:hello@laura-winkler.com");
   await expect(contact.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", /linkedin\.com\/in\/laura-winkler-dev/);
   await expect(contact.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/WinklerLaura/);
 });
