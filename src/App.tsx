@@ -133,7 +133,7 @@ export default function App() {
           <section className="reveal split" id="contact">
             <div className="side"><div className="label">Contact me</div></div>
             <ul className="contact-links">
-              <li><a href={`mailto:${profile.email}`}>{profile.email}<Arrow /></a></li>
+              <li><a href={`mailto:${profile.email}`} title={profile.email}>Email<Arrow /></a></li>
               <li><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn<Arrow external /></a></li>
               <li><a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub<Arrow external /></a></li>
             </ul>
