@@ -96,11 +96,18 @@ test.describe("on phones", () => {
     expect(await look()).toEqual(before);
   });
 
-  test("only the project on screen plays its images", async ({ page }) => {
+  test("only the project on screen plays its images, and it starts right away", async ({ page }) => {
     await page.goto("/");
     const third = page.locator(".project.tile").nth(2);
     await third.evaluate((el) => el.scrollIntoView({ block: "center" }));
-    await expect.poll(() => slideIndex(page, 2), { timeout: 10_000 }).toBeGreaterThan(0);
+    await expect.poll(() => slideIndex(page, 2), { timeout: 2_000 }).toBeGreaterThan(0);
     expect(await slideIndex(page, 0)).toBe(0);
+  });
+
+  test("the sections are not too far apart", async ({ page }) => {
+    await page.goto("/");
+    const about = (await page.locator(".lead section").first().boundingBox())!;
+    const projects = (await page.locator("#projects").boundingBox())!;
+    expect(projects.y - (about.y + about.height)).toBeLessThanOrEqual(60);
   });
 });

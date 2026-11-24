@@ -283,3 +283,6 @@ footer{color:var(--muted);font-size:.8rem}
 @media (prefers-reduced-motion:reduce){
   h1 .shine,.hot .ring::after,.intro > *,.in{animation:none}
 }
+
+/* Phones: less empty space between the sections (About, Projects, Background, ...). */
+@media (max-width:699px){.wrap,.top,.lead{gap:3rem}}
