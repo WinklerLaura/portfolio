@@ -156,11 +156,6 @@ export function Hero({ reduce, onHotspot }: Props) {
 
   return (
     <header className="hero" id="top">
-      <nav className="nav" aria-label="Sections">
-        <a href="#projects">Projects</a>
-        <a href="#background">Background</a>
-        <a href="#contact">Contact</a>
-      </nav>
       <div className="stage">
         <div className="inner" ref={innerRef}>
           <img ref={imgRef} src={hero.src} alt={hero.alt} />

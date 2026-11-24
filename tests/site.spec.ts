@@ -92,6 +92,15 @@ test("the dots of the background timeline sit exactly on their line", async ({ p
   for (const o of offsets) expect(o).toBeLessThanOrEqual(0.5);
 });
 
+test("the Contact me section has email, LinkedIn and GitHub", async ({ page }) => {
+  await page.goto("/");
+  const contact = page.locator("#contact");
+  await expect(contact).toContainText("Contact me");
+  await expect(contact.getByRole("link", { name: "hello@laura-winkler.com" })).toHaveAttribute("href", "mailto:hello@laura-winkler.com");
+  await expect(contact.getByRole("link", { name: "LinkedIn" })).toHaveAttribute("href", /linkedin\.com\/in\/laura-winkler-dev/);
+  await expect(contact.getByRole("link", { name: "GitHub" })).toHaveAttribute("href", /github\.com\/WinklerLaura/);
+});
+
 test.describe("on phones", () => {
   test.beforeEach(({ isMobile }) => test.skip(!isMobile, "phone only"));
 
@@ -110,6 +119,16 @@ test.describe("on phones", () => {
     await page.mouse.wheel(0, 120);
     await page.waitForTimeout(500);
     expect(await look()).toEqual(before);
+  });
+
+  test("the section buttons stay pinned at the top while scrolling", async ({ page }) => {
+    await page.goto("/");
+    const nav = page.getByRole("navigation", { name: "Sections" });
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+    await page.waitForTimeout(300);
+    const box = (await nav.boundingBox())!;
+    expect(Math.round(box.y)).toBe(0);
+    await expect(nav.getByRole("link", { name: "Contact" })).toBeInViewport();
   });
 
   test("only the project on screen plays its images, and it starts right away", async ({ page }) => {
