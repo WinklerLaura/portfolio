@@ -124,15 +124,20 @@ export default function App() {
             </ul>
           </section>
 
-          <footer className="foot" id="contact">
+          <section className="reveal split" id="contact">
+            <div className="side"><div className="label">Contact me</div></div>
+            <ul className="contact-links">
+              <li><a href={`mailto:${profile.email}`}>{profile.email}<Arrow /></a></li>
+              <li><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn<Arrow external /></a></li>
+              <li><a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub<Arrow external /></a></li>
+            </ul>
+          </section>
+
+          <footer className="foot">
             <span>
               © {new Date().getFullYear()} {profile.firstName} {profile.lastName} · Vienna
               <br />
               <small className="ai-note"><a href="/imprint.html">Imprint</a> · <a href="/privacy.html">Privacy</a> · Header image AI-generated</small>
-            </span>
-            <span className="links">
-              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn<Arrow external /></a>
-              <a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub<Arrow external /></a>
             </span>
           </footer>
         </main>
