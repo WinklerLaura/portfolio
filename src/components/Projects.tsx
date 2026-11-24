@@ -10,9 +10,13 @@ interface Props {
   onOpen: (project: Project, imageIndex: number, trigger: HTMLElement) => void;
 }
 
+/** True on phone-sized screens, where the tiles are stacked in one column. */
+const isNarrow = () => window.matchMedia("(max-width: 699px)").matches;
+
 /**
  * Project tiles. Only one tile plays at a time: it shows all its images
- * (with a light flash between them) and returns to its cover, then the next tile starts.
+ * (with a light flash between them) and returns to its cover.
+ * Wide screens: the tiles take turns. Phones: the tile you are looking at plays.
  */
 export function Projects({ reduce, paused, onOpen }: Props) {
   const [indices, setIndices] = useState<number[]>(() => projects.map(() => 0));
@@ -20,6 +24,7 @@ export function Projects({ reduce, paused, onOpen }: Props) {
   const indicesRef = useRef(indices);
   const hoverRef = useRef<boolean[]>(projects.map(() => false));
   const seenRef = useRef<boolean[]>(projects.map(() => true));
+  const ratioRef = useRef<number[]>(projects.map(() => 0)); // how much of each tile is on screen (0 to 1)
   const pausedRef = useRef(paused);
   const tileRefs = useRef<(HTMLElement | null)[]>([]);
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
@@ -43,14 +48,16 @@ export function Projects({ reduce, paused, onOpen }: Props) {
     });
   }, [indices, reduce]);
 
-  // Track which tiles are on screen.
+  // Track which tiles are on screen, and how much of each.
   useEffect(() => {
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         const i = tileRefs.current.indexOf(e.target as HTMLElement);
-        if (i >= 0) seenRef.current[i] = e.isIntersecting;
+        if (i < 0) return;
+        seenRef.current[i] = e.isIntersecting;
+        ratioRef.current[i] = e.isIntersecting ? e.intersectionRatio : 0;
       });
-    });
+    }, { threshold: [0, 0.2, 0.4, 0.6, 0.8, 1] });
     tileRefs.current.forEach((t) => t && io.observe(t));
     return () => io.disconnect();
   }, []);
@@ -61,6 +68,14 @@ export function Projects({ reduce, paused, onOpen }: Props) {
     const timers: number[] = [];
     const later = (fn: () => void, ms: number) => timers.push(window.setTimeout(fn, ms));
     let turn = 0;
+
+    // On phones: the tile that is most visible, if at least 60% of it is on screen.
+    const focused = (): number => {
+      let best = -1, most = 0.6;
+      ratioRef.current.forEach((r, i) => { if (r >= most) { best = i; most = r; } });
+      return best;
+    };
+    const backToCover = (ti: number) => setIndices((idx) => idx.map((v, i) => (i === ti ? 0 : v)));
 
     const advance = (ti: number): number => {
       const p = projects[ti];
@@ -78,6 +93,8 @@ export function Projects({ reduce, paused, onOpen }: Props) {
     const runTile = (ti: number, done: () => void) => {
       let shown = 1;
       const step = () => {
+        // On phones, stop as soon as another tile is the one being looked at.
+        if (isNarrow() && focused() !== ti) { backToCover(ti); later(done, 0); return; }
         if (document.hidden || pausedRef.current || !seenRef.current[ti] || hoverRef.current[ti]) { later(step, 600); return; }
         const dur = advance(ti);
         if (shown < projects[ti].slides.length) { shown++; later(step, Math.max(GAP, dur) + 200); }
@@ -87,7 +104,14 @@ export function Projects({ reduce, paused, onOpen }: Props) {
     };
 
     const cycle = () => {
-      const ti = turn % projects.length; turn++;
+      let ti: number;
+      if (isNarrow()) {
+        ti = focused();
+        if (ti < 0 || projects[ti].slides.length < 2) { later(cycle, 400); return; }
+        later(() => runTile(ti, cycle), 600);
+        return;
+      }
+      ti = turn % projects.length; turn++;
       if (projects[ti].slides.length < 2) { later(cycle, 0); return; }
       later(() => runTile(ti, cycle), 1200);
     };

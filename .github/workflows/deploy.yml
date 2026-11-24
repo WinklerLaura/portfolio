@@ -25,6 +25,12 @@ jobs:
       - name: Build the website
         run: npm run build
 
+      - name: Install the test browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run the checks (nothing is uploaded if one fails)
+        run: npx playwright test
+
       - name: Install the upload tool
         run: sudo apt-get update && sudo apt-get install -y lftp
 
