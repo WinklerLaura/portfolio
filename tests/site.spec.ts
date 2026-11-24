@@ -76,6 +76,22 @@ test("a project opens in a detail view and closes again", async ({ page }) => {
   await expect(dialog).toBeHidden();
 });
 
+test("the dots of the background timeline sit exactly on their line", async ({ page }) => {
+  await page.goto("/");
+  const offsets = await page.locator(".bg li").evaluateAll((items) => items.map((li) => {
+    const r = li.getBoundingClientRect(), cs = getComputedStyle(li), dot = getComputedStyle(li, "::before");
+    const vertical = parseFloat(cs.borderLeftWidth) > 0; // phones: line on the left; desktop: line on top
+    const line = vertical ? r.left + parseFloat(cs.borderLeftWidth) / 2 : r.top + parseFloat(cs.borderTopWidth) / 2;
+    const start = vertical ? r.left + parseFloat(cs.borderLeftWidth) + parseFloat(dot.left) : r.top + parseFloat(cs.borderTopWidth) + parseFloat(dot.top);
+    // Real size of the dot, including its border.
+    const extra = dot.boxSizing === "content-box" ? 2 * parseFloat(dot.borderTopWidth) : 0;
+    const size = parseFloat(vertical ? dot.width : dot.height) + extra;
+    return Math.abs(start + size / 2 - line);
+  }));
+  expect(offsets).toHaveLength(3);
+  for (const o of offsets) expect(o).toBeLessThanOrEqual(0.5);
+});
+
 test.describe("on phones", () => {
   test.beforeEach(({ isMobile }) => test.skip(!isMobile, "phone only"));
 
