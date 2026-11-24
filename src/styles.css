@@ -36,7 +36,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--glow);outline-offse
   background:rgba(7,11,22,.45);border:1px solid rgba(188,212,255,.16);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:border-color .2s,background .2s}
 .nav a:hover{border-color:rgba(188,212,255,.5);background:rgba(20,32,60,.6)}
 @media (min-width:1100px){.nav{display:none}}
-@media (max-width:1099px){.nav{position:relative;justify-content:center;padding-bottom:.9rem}}
+/* Phones and tablets: the section buttons stay pinned at the top while scrolling. */
+@media (max-width:1099px){
+  .nav{position:sticky;top:0;z-index:30;justify-content:center;padding-top:calc(.6rem + env(safe-area-inset-top,0px));padding-bottom:.6rem;
+    background:rgba(7,11,22,.78);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(188,212,255,.08)}
+  section,.project{scroll-margin-top:4rem}
+}
 @media (max-width:1099px){.stage{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(180deg,transparent 0,#000 22%,#000 100%);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%),linear-gradient(180deg,transparent 0,#000 22%,#000 100%);mask-composite:intersect}}
 
 .hot{position:absolute;z-index:3;width:2.4rem;height:2.4rem;margin:-1.2rem 0 0 -1.2rem;border:0;padding:0;background:none;cursor:pointer;color:var(--fg)}
@@ -137,6 +142,12 @@ p{margin:0;max-width:75ch}
 .links a:hover .arr.ext{transform:translate(2px,-2px)}
 .foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;padding-top:1.5rem;border-top:1px solid var(--line)}
 .foot .links{margin-top:0}
+
+/* Contact me: email, LinkedIn and GitHub as pill-shaped links */
+.contact-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.75rem}
+.contact-links a{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.15rem;border:1px solid rgba(188,212,255,.28);border-radius:999px;background:rgba(188,212,255,.05);font-weight:700;font-size:.95rem;text-decoration:none;color:var(--glow);transition:border-color .2s,box-shadow .2s,background .2s}
+.contact-links a .arr{width:14px;height:14px}
+@media (hover:hover){.contact-links a:hover{border-color:rgba(188,212,255,.6);background:rgba(188,212,255,.1);box-shadow:0 0 18px -4px rgba(188,212,255,.45)}.contact-links a:hover .arr{transform:translateX(3px)}}
 .more-cta{color:var(--muted);font-size:.95rem;margin-top:.4rem}
 .more-cta a{display:inline-flex;align-items:center;gap:.35rem;font-weight:700;text-decoration:none}
 .more-cta a:hover .arr{transform:translateX(3px)}
