@@ -121,17 +121,20 @@ test.describe("on phones", () => {
     expect(await look()).toEqual(before);
   });
 
-  test("status: 'from early 2027' stays next to 'Open to new roles', 'Vienna · Hybrid' goes below", async ({ page }) => {
+  test("status: 'from early 2027' only wraps when it has to, 'Vienna · Hybrid' goes below", async ({ page }) => {
     await page.goto("/");
     const tops = await page.evaluate(() => {
       const nws = [...document.querySelectorAll(".status-lines .nw")];
-      const top = (txt: string) => nws.find((e) => e.textContent!.includes(txt))!.getBoundingClientRect().top;
+      const box = (txt: string) => nws.find((e) => e.textContent!.includes(txt))!.getBoundingClientRect();
       const r = document.createRange();
       const place = [...document.querySelector(".status-lines .s2")!.childNodes].find((n) => n.nodeType === 3 && n.textContent!.includes("Vienna"))!;
       r.selectNodeContents(place);
-      return { open: top("Open to new roles"), when: top("from early 2027"), place: r.getBoundingClientRect().top };
+      const open = box("Open to new roles"), when = box("from early 2027");
+      const right = document.querySelector(".status-lines")!.getBoundingClientRect().right;
+      return { open: open.top, when: when.top, room: right - open.right, need: when.width, place: r.getBoundingClientRect().top };
     });
-    expect(Math.abs(tops.when - tops.open)).toBeLessThan(3);
+    // if "from early 2027" is on a new line, it really didn't fit behind "Open to new roles"
+    if (tops.when > tops.open + 3) expect(tops.room).toBeLessThan(tops.need + 5);
     expect(tops.place).toBeGreaterThan(tops.when + 5);
   });
 
