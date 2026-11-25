@@ -121,6 +121,23 @@ test.describe("on phones", () => {
     expect(await look()).toEqual(before);
   });
 
+  test("status: 'from early 2027' only wraps when it has to, 'Vienna · Hybrid' goes below", async ({ page }) => {
+    await page.goto("/");
+    const tops = await page.evaluate(() => {
+      const nws = [...document.querySelectorAll(".status-lines .nw")];
+      const box = (txt: string) => nws.find((e) => e.textContent!.includes(txt))!.getBoundingClientRect();
+      const r = document.createRange();
+      const place = [...document.querySelector(".status-lines .s2")!.childNodes].find((n) => n.nodeType === 3 && n.textContent!.includes("Vienna"))!;
+      r.selectNodeContents(place);
+      const open = box("Open to new roles"), when = box("from early 2027");
+      const right = document.querySelector(".status-lines")!.getBoundingClientRect().right;
+      return { open: open.top, when: when.top, room: right - open.right, need: when.width, place: r.getBoundingClientRect().top };
+    });
+    // if "from early 2027" is on a new line, it really didn't fit behind "Open to new roles"
+    if (tops.when > tops.open + 3) expect(tops.room).toBeLessThan(tops.need + 5);
+    expect(tops.place).toBeGreaterThan(tops.when + 5);
+  });
+
   test("the section buttons stay pinned at the top while scrolling", async ({ page }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Sections" });
