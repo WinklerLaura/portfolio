@@ -121,6 +121,20 @@ test.describe("on phones", () => {
     expect(await look()).toEqual(before);
   });
 
+  test("status: 'from early 2027' stays next to 'Open to new roles', 'Vienna · Hybrid' goes below", async ({ page }) => {
+    await page.goto("/");
+    const tops = await page.evaluate(() => {
+      const nws = [...document.querySelectorAll(".status-lines .nw")];
+      const top = (txt: string) => nws.find((e) => e.textContent!.includes(txt))!.getBoundingClientRect().top;
+      const r = document.createRange();
+      const place = [...document.querySelector(".status-lines .s2")!.childNodes].find((n) => n.nodeType === 3 && n.textContent!.includes("Vienna"))!;
+      r.selectNodeContents(place);
+      return { open: top("Open to new roles"), when: top("from early 2027"), place: r.getBoundingClientRect().top };
+    });
+    expect(Math.abs(tops.when - tops.open)).toBeLessThan(3);
+    expect(tops.place).toBeGreaterThan(tops.when + 5);
+  });
+
   test("the section buttons stay pinned at the top while scrolling", async ({ page }) => {
     await page.goto("/");
     const nav = page.getByRole("navigation", { name: "Sections" });
