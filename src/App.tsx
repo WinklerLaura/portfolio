@@ -76,7 +76,7 @@ export default function App() {
                     {profile.status.main.map((part) => <span key={part}><span className="nw">{part}</span> </span>)}
                     <span className="s2">
                       <span className="nw">{profile.status.when}</span>
-                      <span className="sep"> · </span>
+                      <span className="sep">{"\u00a0·"}</span>
                       <br />
                       {profile.status.place}
                     </span>
