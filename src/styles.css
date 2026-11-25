@@ -74,7 +74,6 @@ p{margin:0;max-width:75ch}
 .status{display:inline-flex;align-items:flex-start;gap:.65rem;margin-top:1.75rem;font-size:.86rem;color:var(--fg);
   padding:.55rem 1rem;border-radius:1.2rem;border:1px solid rgba(188,212,255,.22);background:linear-gradient(90deg,rgba(188,212,255,.08),rgba(188,212,255,.02))}
 .status-lines{display:block}
-.status-lines .sep{display:none}
 .status-lines .nw{white-space:nowrap}
 /* Phones: "from early 2027" stays next to "Open to new roles" when it fits; "Vienna · Hybrid" goes on its own line below */
 @media (max-width:699px){.status{padding:.55rem .8rem;gap:.5rem}}
